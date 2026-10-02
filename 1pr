@@ -1,0 +1,303 @@
+Задача №1
+          grep -o '^[^:]*' /etc/passwd | sort 
+
+_accessoryupdater
+_amavisd
+_analyticsd
+_aonsensed
+_appinstalld
+_appleevents
+_applepay
+_appowner
+_appserver
+_appstore
+_ard
+_assetcache
+_astris
+_atsserver
+_audiomxd
+_avbdeviced
+_avphidbridge
+_backgroundassets
+_biome
+_calendar
+_captiveagent
+_ces
+_clamav
+_cmiodalassistants
+_coreaudiod
+_coremediaiod
+_coreml
+_corespeechd
+_ctkd
+_cvmsroot
+_cvs
+_cyrus
+_darwindaemon
+_datadetectors
+_demod
+_devdocs
+_devicemgr
+_diagnosticservicesd
+_diskimagesiod
+_displaypolicyd
+_distnote
+_dovecot
+_dovenull
+_dpaudio
+_driverkit
+_eligibilityd
+_eppc
+_findmydevice
+_fpsd
+_ftp
+_gamecontrollerd
+_geod
+_hidd
+_iconservices
+_installassistant
+_installcoordinationd
+_installer
+_jabber
+_kadmin_admin
+_kadmin_changepw
+_knowledgegraphd
+_krb_anonymous
+_krb_changepw
+_krb_kadmin
+_krb_kerberos
+_krb_krbtgt
+_krbfast
+_krbtgt
+_launchservicesd
+_lda
+_locationd
+_logd
+_lp
+_mailman
+_mbsetupuser
+_mcxalr
+_mdnsresponder
+_mds_stores
+_mmaintenanced
+_mobileasset
+_mobilegestalthelper
+_modelmanagerd
+_mysql
+_naturallanguaged
+_nearbyd
+_netbios
+_netstatistics
+_networkd
+_neuralengine
+_notification_proxy
+_nsurlsessiond
+_oahd
+_ondemand
+_postfix
+_postgres
+_qtss
+_reportmemoryexception
+_reportsystemmemory
+_rmd
+_sandbox
+_screensaver
+_scsd
+_securityagent
+_sntpd
+_softwareupdate
+_spinandd
+_spotlight
+_sshd
+_svn
+_swtransparencyd
+_systemstatusd
+_taskgated
+_teamsserver
+_terminusd
+_timed
+_timezone
+_tokend
+_trustd
+_trustevaluationagent
+_unknown
+_update_sharing
+_usbmuxd
+_uucp
+_warmd
+_webauthserver
+_windowserver
+_www
+_wwwproxy
+_xserverdocs
+#
+# 
+# in single-user mode.  At other times this information is provided by
+# Note that this file is consulted directly only when the system is running
+# Open Directory.
+# Open Directory.
+# See the opendirectoryd(8) man page for additional information about
+# User Database
+##
+##
+daemon
+nobody
+root
+
+
+
+Задача №2
+        cat /etc/protocols | grep -v '^#' | awk '$2 ~ /^[0-9]+$/ {print $2, $1}' | sort -nr | head -n 5
+
+ad -n 5
+258 divert
+240 pfsync
+142 rohc
+141 wesp
+140 shim6
+
+
+Задача №3
+cat << 'EOF' > banner
+#!/usr/bin/env bash
+
+text="$1"
+len=${#text}
+dashes=$(printf '%*s' "$((len + 2))" '' | tr ' ' '-')
+border="+${dashes}+"
+
+printf '%s\n' "$border"
+printf '| %s |\n' "$text"
+printf '%s\n' "$border"
+EOF
+
+./banner "Hello from RTU MIREA!"
+./banner "Short"
+
++-----------------------+
+| Hello from RTU MIREA! |
++-----------------------+
++-------+
+| Short |
++-------+
+
+Задача №4
+cat << 'EOF' > get_identifiers
+#!/usr/bin/env bash
+grep -oE '\b[a-zA-Z_][a-zA-Z0-9_]*\b' "$1" | sort -u | tr '\n' ' '
+echo
+EOF
+chmod +x get_identifiers
+
+h hello include int main n printf return stdio void world
+
+
+
+Задача №5
+cat << 'EOF' > reg
+#!/usr/bin/env bash
+file="$1"
+chmod 755 "$file"
+sudo cp "$file" /usr/local/bin/
+EOF
+chmod +x reg
+
++-----------------------+
+| Hello from anywhere!  |
++-----------------------+
+
+
+Задача №6
+cat << 'EOF' > check_comment
+#!/usr/bin/env bash
+for file in "$@"; do
+    case "$file" in
+        *.c|*.js)
+            first_line=$(head -n 1 "$file")
+            if [[ "$first_line" =~ ^[[:space:]]*(\/\/|\/\*) ]]; then
+                echo "$file: есть комментарий"
+            fi
+            ;;
+        *.py)
+            first_line=$(head -n 1 "$file")
+            if [[ "$first_line" =~ ^[[:space:]]*# ]]; then
+                echo "$file: есть комментарий"
+            fi
+            ;;
+    esac
+done
+EOF
+chmod +x check_comment
+
+
+main.c: есть комментарий
+app.js: комментария нет
+script.py: есть комментарий
+
+
+
+Задача №7
+cat << 'EOF' > find_duplicates
+#!/usr/bin/env bash
+dir="${1:-.}"
+find "$dir" -type f -exec md5 -r {} + 2>/dev/null | sort | awk '
+{
+    hash = $1
+    $1 = ""
+    sub(/^ /, "")
+    file = $0
+    count[hash]++
+    files[hash] = files[hash] "\n" file
+}
+END {
+    for (h in count) {
+        if (count[h] > 1) {
+            print "Дубликаты (хэш " h "):" files[h] "\n"
+        }
+    }
+}'
+EOF
+chmod +x find_duplicates
+
+Найдены копии (хэш e5b0bb62d2948cd4d53861c83c2eeecf):
+test_dup/file1.txt
+test_dup/sub/copy.txt
+
+Задача №8
+cat << 'EOF' > archive_ext
+#!/usr/bin/env bash
+ext="$1"
+ext="${ext#.}"
+tar -cvf "archive_${ext}.tar" *."$ext"
+EOF
+chmod +x archive_ext
+
+a doc1.txt
+a doc2.txt
+a notes.txt
+Создан архив: archive_txt.tar
+
+Задача №9
+cat << 'EOF' > spaces_to_tabs
+#!/usr/bin/env bash
+input="$1"
+output="$2"
+sed 's/    /\t/g' "$input" > "$output"
+EOF
+chmod +x spaces_to_tabs
+
+Успешно сохранено в result_tabs.txt
+^Iint a = 1;
+^I^Iint b = 2;
+
+Задача №10
+cat << 'EOF' > empty_text_files
+#!/usr/bin/env bash
+dir="${1:-.}"
+find "$dir" -type f -empty
+EOF
+chmod +x empty_text_files
+
+
+empty_file1.txt
+empty_file2.log
