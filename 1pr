@@ -116,11 +116,11 @@ else
     hash_cmd="md5 -r"
 fi
 
-find "$target_dir" -type f -exec $hash_cmd {} + 2>/dev/null | \
+find "$target_dir" -type f -exec $hash_cmd {} + 2>/dev/null | \                    //запустить проверку пачку всех файлов
 awk '{
     hash = $1                                //сохраняем хэш файла
-    $1 = ""                                  //удаляем хэш и срезаем пробел
-    sub(/^ /, "", $0)
+    $1 = ""                                  
+    sub(/^ /, "", $0)                        //удаляем хэш и срезаем пробел
     files[hash] = files[hash] ? files[hash] "\n  " $0 : $0           //проверка был ли такой хэш
     count[hash]++                            //счетчик массив хэшей
 }
@@ -203,16 +203,17 @@ fi
 
 # Ищем пустые файлы (размером 0 байт)
 find "$target_dir" -type f -empty | while IFS= read -r file; do
-    # Проверяем MIME-тип файла утилитой file
-    mime_type=$(file --brief --mime-type "$file")
+    mime_type=$(file --brief --mime-type "$file")             //--mime-type — возвращает MIME-тип в стандартизированном виде (например, text/plain, text/x-c, inode/x-empty)
 
-    if [[ "$mime_type" == text/* || "$mime_type" == "inode/x-empty" || "$mime_type" == "application/x-empty" ]]; then
-        basename "$file"
+    if [[ "$mime_type" == text/* || "$mime_type" == "inode/x-empty" || "$mime_type" == "application/x-empty" ]]; then    //проверяет пустой ли файл
+        basename "$file"    //отсекает путь к файлу оставляет только название
     fi
 done
 EOF
 chmod +x find_empty_text.sh
 
+
+./find_empty_text.sh /path/to/directory
 
 
 
